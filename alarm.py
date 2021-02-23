@@ -25,11 +25,7 @@ class App:
   lbl1.config(bg='yellow')
   lbl1.config(height=3, font=('times', 20, 'bold'))
   for k in range(seconds, 0, -1):
-   if k == 30:
-    print("\a")
-   if k== 29:
-    print("\a")
-   if k== 28:
+   if k in [30, 29, 28]:
     print("\a")
    lbl1["text"] = k
    root.update()

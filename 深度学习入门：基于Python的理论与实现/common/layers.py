@@ -17,9 +17,7 @@ class Relu:
 
     def backward(self, dout):
         dout[self.mask] = 0
-        dx = dout
-
-        return dx
+        return dout
 
 
 class Sigmoid:
@@ -32,9 +30,7 @@ class Sigmoid:
         return out
 
     def backward(self, dout):
-        dx = dout * (1.0 - self.out) * self.out
-
-        return dx
+        return dout * (1.0 - self.out) * self.out
 
 
 class Affine:
@@ -54,9 +50,7 @@ class Affine:
         x = x.reshape(x.shape[0], -1)
         self.x = x
 
-        out = np.dot(self.x, self.W) + self.b
-
-        return out
+        return np.dot(self.x, self.W) + self.b
 
     def backward(self, dout):
         dx = np.dot(dout, self.W.T)
@@ -101,11 +95,11 @@ class Dropout:
         self.mask = None
 
     def forward(self, x, train_flg=True):
-        if train_flg:
-            self.mask = np.random.rand(*x.shape) > self.dropout_ratio
-            return x * self.mask
-        else:
+        if not train_flg:
             return x * (1.0 - self.dropout_ratio)
+
+        self.mask = np.random.rand(*x.shape) > self.dropout_ratio
+        return x * self.mask
 
     def backward(self, dout):
         return dout * self.mask
@@ -147,14 +141,14 @@ class BatchNormalization:
             N, D = x.shape
             self.running_mean = np.zeros(D)
             self.running_var = np.zeros(D)
-                        
+
         if train_flg:
             mu = x.mean(axis=0)
             xc = x - mu
             var = np.mean(xc**2, axis=0)
             std = np.sqrt(var + 10e-7)
             xn = xc / std
-            
+
             self.batch_size = x.shape[0]
             self.xc = xc
             self.xn = xn
@@ -164,9 +158,8 @@ class BatchNormalization:
         else:
             xc = x - self.running_mean
             xn = xc / ((np.sqrt(self.running_var + 10e-7)))
-            
-        out = self.gamma * xn + self.beta 
-        return out
+
+        return self.gamma * xn + self.beta
 
     def backward(self, dout):
         if dout.ndim != 2:
@@ -238,9 +231,7 @@ class Convolution:
         self.dW = self.dW.transpose(1, 0).reshape(FN, C, FH, FW)
 
         dcol = np.dot(dout, self.col_W.T)
-        dx = col2im(dcol, self.x.shape, FH, FW, self.stride, self.pad)
-
-        return dx
+        return col2im(dcol, self.x.shape, FH, FW, self.stride, self.pad)
 
 
 class Pooling:
@@ -272,13 +263,13 @@ class Pooling:
 
     def backward(self, dout):
         dout = dout.transpose(0, 2, 3, 1)
-        
+
         pool_size = self.pool_h * self.pool_w
         dmax = np.zeros((dout.size, pool_size))
         dmax[np.arange(self.arg_max.size), self.arg_max.flatten()] = dout.flatten()
         dmax = dmax.reshape(dout.shape + (pool_size,)) 
-        
+
         dcol = dmax.reshape(dmax.shape[0] * dmax.shape[1] * dmax.shape[2], -1)
-        dx = col2im(dcol, self.x.shape, self.pool_h, self.pool_w, self.stride, self.pad)
-        
-        return dx
+        return col2im(
+            dcol, self.x.shape, self.pool_h, self.pool_w, self.stride, self.pad
+        )

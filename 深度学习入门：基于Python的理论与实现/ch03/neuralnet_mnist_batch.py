@@ -27,9 +27,7 @@ def predict(network, x):
     a2 = np.dot(z1, w2) + b2
     z2 = sigmoid(a2)
     a3 = np.dot(z2, w3) + b3
-    y = softmax(a3)
-
-    return y
+    return softmax(a3)
 
 
 x, t = get_data()
