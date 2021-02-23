@@ -16,9 +16,7 @@ class simpleNet:
     def loss(self, x, t):
         z = self.predict(x)
         y = softmax(z)
-        loss = cross_entropy_error(y, t)
-
-        return loss
+        return cross_entropy_error(y, t)
 
 x = np.array([0.6, 0.9])
 t = np.array([0, 0, 1])

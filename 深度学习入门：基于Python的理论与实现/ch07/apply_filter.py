@@ -38,16 +38,16 @@ fig = plt.figure()
 
 w_idx = 1
 
+b = 0  # network.params['b1'][i]
+
 for i in range(16):
     w = network.params['W1'][i]
-    b = 0  # network.params['b1'][i]
-
     w = w.reshape(1, *w.shape)
     #b = b.reshape(1, *b.shape)
-    conv_layer = Convolution(w, b) 
+    conv_layer = Convolution(w, b)
     out = conv_layer.forward(img)
     out = out.reshape(out.shape[2], out.shape[3])
-    
+
     ax = fig.add_subplot(4, 4, i+1, xticks=[], yticks=[])
     ax.imshow(out, cmap=plt.cm.gray_r, interpolation='nearest')
 

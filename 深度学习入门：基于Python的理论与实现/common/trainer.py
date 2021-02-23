@@ -40,24 +40,24 @@ class Trainer:
         batch_mask = np.random.choice(self.train_size, self.batch_size)
         x_batch = self.x_train[batch_mask]
         t_batch = self.t_train[batch_mask]
-        
+
         grads = self.network.gradient(x_batch, t_batch)
         self.optimizer.update(self.network.params, grads)
-        
+
         loss = self.network.loss(x_batch, t_batch)
         self.train_loss_list.append(loss)
         if self.verbose: print("train loss:" + str(loss))
-        
+
         if self.current_iter % self.iter_per_epoch == 0:
             self.current_epoch += 1
-            
+
             x_train_sample, t_train_sample = self.x_train, self.t_train
             x_test_sample, t_test_sample = self.x_test, self.t_test
-            if not self.evaluate_sample_num_per_epoch is None:
+            if self.evaluate_sample_num_per_epoch is not None:
                 t = self.evaluate_sample_num_per_epoch
                 x_train_sample, t_train_sample = self.x_train[:t], self.t_train[:t]
                 x_test_sample, t_test_sample = self.x_test[:t], self.t_test[:t]
-                
+
             train_acc = self.network.accuracy(x_train_sample, t_train_sample)
             test_acc = self.network.accuracy(x_test_sample, t_test_sample)
             self.train_acc_list.append(train_acc)
@@ -67,7 +67,7 @@ class Trainer:
         self.current_iter += 1
 
     def train(self):
-        for i in range(self.max_iter):
+        for _ in range(self.max_iter):
             self.train_step()
 
         test_acc = self.network.accuracy(self.x_test, self.t_test)

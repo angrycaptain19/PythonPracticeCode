@@ -119,9 +119,7 @@ class DeepConvNet:
         return grads
 
     def save_params(self, file_name="params.pkl"):
-        params = {}
-        for key, val in self.params.items():
-            params[key] = val
+        params = {key: val for key, val in self.params.items()}
         with open(file_name, 'wb') as f:
             pickle.dump(params, f)
 

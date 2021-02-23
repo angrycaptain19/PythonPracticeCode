@@ -99,8 +99,7 @@ class MultiLayerNet:
         y = np.argmax(y, axis=1)
         if t.ndim != 1 : t = np.argmax(t, axis=1)
 
-        accuracy = np.sum(y == t) / float(x.shape[0])
-        return accuracy
+        return np.sum(y == t) / float(x.shape[0])
 
     def numerical_gradient(self, x, t):
         """求梯度（数值微分）
